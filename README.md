@@ -292,17 +292,48 @@ pytest tests/test_quality.py --html=quality_report.html
 
 ## Integrations
 
-Works with any LLM/RAG framework:
+### LangChain
 
-| Framework | Integration |
+Convert PDFs directly into LangChain Document objects for RAG pipelines:
+
+```python
+from pdf_pilot.integrations.langchain import to_langchain_document
+from langchain.vectorstores import FAISS
+from langchain.embeddings import OpenAIEmbeddings
+
+# Single document
+doc = to_langchain_document("report.pdf")
+db = FAISS.from_documents([doc], OpenAIEmbeddings())
+
+# Multiple PDFs with page-level splitting
+docs = to_langchain_documents(
+    ["paper1.pdf", "paper2.pdf"],
+    split_by_page=True,
+)
+```
+
+### LlamaIndex
+
+Convert PDFs into LlamaIndex Document objects:
+
+```python
+from pdf_pilot.integrations.llamaindex import to_llamaindex_document
+from llama_index.core import VectorStoreIndex
+
+doc = to_llamaindex_document("report.pdf")
+index = VectorStoreIndex.from_documents([doc])
+```
+
+### Other Frameworks
+
+| Framework | Usage |
 |---|---|
-| LangChain | `convert()` returns text → pass to Document |
-| LlamaIndex | Same — feed markdown to `Document` |
 | Dify / Flowise | CLI mode in pipeline |
-| Cursor / Copilot | Use as local tool |
+| Cursor / Copilot | Use `pdf_pilot` as local tool |
 
 ## Roadmap
 
+- [x] LangChain / LlamaIndex native integration
 - [ ] Docling GPU benchmark (current: Windows CPU crash)
 - [ ] MinerU full integration test (Python 3.13 env)
 - [ ] Batch processing optimization

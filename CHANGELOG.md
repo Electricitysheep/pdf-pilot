@@ -7,10 +7,12 @@
 - Competitor comparison table (vs pdfplumber, marker, pymupdf, unstructured)
 - Colab demo notebook for zero-install testing
 - AI Agent platform integration guide (Claude Code, OpenClaw, OpenCode, Hermes)
+- LangChain integration module (`pdf_pilot.integrations.langchain`)
+- LlamaIndex integration module (`pdf_pilot.integrations.llamaindex`)
 - CODE_OF_CONDUCT.md
 - Enhanced CONTRIBUTING.md with project structure and testing guidelines
 - Improved bug report template with more fields
-- scripts/demo.py for terminal demo recording
+- scripts/demo.py and scripts/record_demo.sh for terminal demo recording
 
 ### Fixed
 - Config bug where `config.engine` was not set for non-Config callers

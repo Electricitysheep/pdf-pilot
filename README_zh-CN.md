@@ -323,8 +323,50 @@ pytest tests/ -v
 pytest tests/test_quality.py -v
 ```
 
+## 集成
+
+### LangChain
+
+将 PDF 直接转换为 LangChain Document 对象用于 RAG 流水线：
+
+```python
+from pdf_pilot.integrations.langchain import to_langchain_document
+from langchain.vectorstores import FAISS
+from langchain.embeddings import OpenAIEmbeddings
+
+# 单个文档
+doc = to_langchain_document("report.pdf")
+db = FAISS.from_documents([doc], OpenAIEmbeddings())
+
+# 多个 PDF 并按页面分割
+docs = to_langchain_documents(
+    ["paper1.pdf", "paper2.pdf"],
+    split_by_page=True,
+)
+```
+
+### LlamaIndex
+
+将 PDF 转换为 LlamaIndex Document 对象：
+
+```python
+from pdf_pilot.integrations.llamaindex import to_llamaindex_document
+from llama_index.core import VectorStoreIndex
+
+doc = to_llamaindex_document("report.pdf")
+index = VectorStoreIndex.from_documents([doc])
+```
+
+### 其他框架
+
+| 框架 | 用法 |
+|---|---|
+| Dify / Flowise | 流水线中使用 CLI 模式 |
+| Cursor / Copilot | 作为本地工具使用 |
+
 ## 路线图
 
+- [x] LangChain / LlamaIndex 原生集成
 - [ ] Docling GPU 基准测试（当前: Windows CPU 崩溃）
 - [ ] MinerU 完整集成测试（Python 3.13 环境）
 - [ ] 批量处理优化

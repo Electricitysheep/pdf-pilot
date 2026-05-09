@@ -12,7 +12,7 @@
 If you discover a security vulnerability in pdf_pilot, please report it responsibly:
 
 1. **Do NOT open a public issue** for security vulnerabilities
-2. Email: [your-email@example.com](mailto:your-email@example.com)
+2. Email: [Electricitysheep](https://github.com/Electricitysheep)
 3. Alternatively, use GitHub's [private vulnerability reporting](https://github.com/Electricitysheep/pdf-pilot/security/advisories/new)
 
 We will respond within 48 hours and aim to release a fix within 7 days for confirmed vulnerabilities.
