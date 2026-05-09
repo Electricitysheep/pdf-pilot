@@ -8,7 +8,7 @@ build/
 *.egg
 .env/
 .venv/
-output/
+/output/
 *.pdf.bak
 test_output/
 tests/fixtures/*.pdf
