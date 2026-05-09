@@ -4,5 +4,5 @@ from pdf_pilot.config import Config
 from pdf_pilot.convert import convert
 from pdf_pilot.model import ExtractedDocument
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = ["convert", "Config", "ExtractedDocument"]

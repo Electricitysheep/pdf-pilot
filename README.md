@@ -57,6 +57,10 @@ pdf_pilot input.pdf -o output.md
 pdf_pilot --list-engines
 ```
 
+<a href="https://colab.research.google.com/github/Electricitysheep/pdf-pilot/blob/main/demo.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/></a>
+
+> **Try it now** — no installation needed. Open the [Colab demo notebook](https://colab.research.google.com/github/Electricitysheep/pdf-pilot/blob/main/demo.ipynb) to convert PDFs directly in your browser.
+
 Full usage guide with examples → [Usage Guide](#usage-guide) below.
 
 ## Usage Guide
