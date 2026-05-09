@@ -30,91 +30,14 @@ jobs:
       - name: Download test fixtures
         run: |
           mkdir -p tests/fixtures
-          cd tests/fixtures
 
-          # Generate test PDFs using pymupdf
-          python3 -c "
-          import fitz  # pymupdf
+          # Academic paper (arxiv always works)
+          curl -sL -o tests/fixtures/attention.pdf "https://arxiv.org/pdf/1706.03762"
 
-          # Multi-column style PDF (text with headings)
-          doc = fitz.open()
-          page = doc.new_page()
-          text = '''Introduction
-          This is a multi-column test document with proper heading structure.
-          It tests the ability to extract text in reading order.
+          # Generate simple test PDFs with pymupdf
+          python3 tests/generate_fixtures.py 2>/dev/null || echo "Fixture generation failed, some tests will skip"
 
-          Background
-          Natural language processing has seen remarkable progress in recent years.
-          The Transformer architecture has become the de facto standard.
-
-          Method
-          We propose a novel approach based on self-attention mechanisms.
-          The model processes all positions in parallel.
-
-          Results
-          Our model achieves state-of-the-art results on multiple benchmarks.
-          The quality improves significantly with model size.
-
-          Conclusion
-          We have shown that the proposed approach works well.
-          Future work will extend to multilingual settings.
-          '''
-          for para in text.strip().split('\n\n'):
-              para = para.strip()
-              if not para:
-                  continue
-              if para.endswith('\n') or len(para.split()) < 5:
-                  continue
-              if para in ['Introduction', 'Background', 'Method', 'Results', 'Conclusion']:
-                  page.insert_text((72, 72 + 40*list(text.strip().split('\n\n')).index(para)), para, fontsize=16)
-              else:
-                  pass
-          doc.save('chelsea_pdta.pdf')
-          doc.close()
-
-          # Table PDF
-          doc = fitz.open()
-          page = doc.new_page()
-          headers = ['Name', 'Value', 'Category']
-          rows = [
-              ['Apple', '1.50', 'Fruit'],
-              ['Bread', '3.00', 'Grain'],
-              ['Milk', '2.75', 'Dairy'],
-          ]
-          y = 72
-          for h in headers:
-              page.insert_text((72 + headers.index(h)*150, y), h, fontsize=12)
-          y = 92
-          for row in rows:
-              for cell in row:
-                  page.insert_text((72 + row.index(cell)*150, y), cell, fontsize=10)
-              y += 20
-          doc.save('federal-register.pdf')
-          doc.close()
-
-          # Scanned-style PDF (image-based)
-          doc = fitz.open()
-          page = doc.new_page()
-          page.insert_text((50, 50), 'Scanned Document Sample', fontsize=14)
-          doc.save('scanned.pdf')
-          doc.close()
-
-          # Academic paper (Attention Is All You Need from arxiv)
-          print('Generated test PDFs')
-          " 2>/dev/null || echo "PDF generation skipped"
-
-          # Academic paper
-          curl -sL -o attention.pdf "https://arxiv.org/pdf/1706.03762"
-
-          # Validate sizes
-          for f in *.pdf; do
-            size=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f")
-            if [ "$size" -lt 100 ]; then
-              echo "WARNING: $f is small ($size bytes), tests may skip"
-            else
-              echo "OK: $f ($size bytes)"
-            fi
-          done
+          ls -la tests/fixtures/
         shell: bash
 
       - name: Run linter
