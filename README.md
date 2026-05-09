@@ -223,6 +223,24 @@ Multi-column academic paper — 15 pages, Attention Is All You Need:
 *Note: Docling CPU crash on Windows (PyTorch access violation). Benchmark pending GPU environment.*
 </details>
 
+## Competitor Comparison
+
+| Feature | **pdf_pilot** | pdfplumber | marker | pymupdf | unstructured |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Auto engine routing | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Multi-engine fallback | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Scanned PDF support | ✅ | ❌ | ✅ | ⚠️ | ✅ |
+| Chinese + OCR | ✅ | ❌ | ⚠️ | ❌ | ⚠️ |
+| Table extraction | ✅ | ✅ | ⚠️ | ❌ | ⚠️ |
+| Formula/LaTeX | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Word output | ✅ | ❌ | ❌ | ❌ | ❌ |
+| CLI | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Python API | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Setup time | ⚡ Instant | ⚡ Instant | 🐢 ML model | ⚡ Instant | 🐢 ML model |
+| License | MIT | MIT | Apache 2.0 | MIT | MIT |
+
+**pdf_pilot** is the only tool that automatically adapts to your document type. Others force you to choose.
+
 ## Architecture
 
 ```
