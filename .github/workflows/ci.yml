@@ -30,14 +30,29 @@ jobs:
       - name: Download test fixtures
         run: |
           mkdir -p tests/fixtures
-          # Multi-column PDF (from pdfplumber test suite)
-          curl -sL -o tests/fixtures/chelsea_pdta.pdf "https://raw.githubusercontent.com/jsvine/pdfplumber/v7.2.3/tests/pdfs/chelsea.pdf"
+          cd tests/fixtures
+
+          # Multi-column PDF
+          curl -sL -o chelsea_pdta.pdf "https://raw.githubusercontent.com/jsvine/pdfplumber/stable/tests/pdfs/chelsea.pdf"
+
           # Table PDF
-          curl -sL -o tests/fixtures/federal-register.pdf "https://raw.githubusercontent.com/jsvine/pdfplumber/v7.2.3/tests/pdfs/federal-register.pdf"
-          # Academic paper (Attention Is All You Need)
-          curl -sL -o tests/fixtures/attention.pdf "https://arxiv.org/pdf/1706.03762"
-          # Scanned PDF (W3C sample)
-          curl -sL -o tests/fixtures/scanned.pdf "https://www.w3.org/WAI/WCAG21/Techniques/pdf/img/table-data复杂性.pdf"
+          curl -sL -o federal-register.pdf "https://raw.githubusercontent.com/jsvine/pdfplumber/stable/tests/pdfs/federal-register.pdf"
+
+          # Scanned PDF (pdfplumber sample)
+          curl -sL -o scanned.pdf "https://raw.githubusercontent.com/jsvine/pdfplumber/stable/tests/pdfs/congressional-record.pdf"
+
+          # Academic paper
+          curl -sL -o attention.pdf "https://arxiv.org/pdf/1706.03762"
+
+          # Validate: all files should be > 1KB
+          for f in *.pdf; do
+            size=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f")
+            if [ "$size" -lt 1024 ]; then
+              echo "ERROR: $f is too small ($size bytes), download may have failed"
+              exit 1
+            fi
+            echo "OK: $f ($size bytes)"
+          done
         shell: bash
 
       - name: Run linter
