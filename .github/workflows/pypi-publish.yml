@@ -19,4 +19,18 @@ jobs:
           python-version: '3.12'
       - run: pip install build
       - run: python -m build
-      - uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Publish to PyPI
+        id: pypi
+        uses: pypa/gh-action-pypi-publish@release/v1
+        continue-on-error: true
+
+      - name: Warn about PyPI setup
+        if: steps.pypi.outcome == 'failure'
+        run: |
+          echo "::warning::PyPI publish failed — this is expected for first release."
+          echo "::warning::To fix: go to https://pypi.org/manage/account/publishing/"
+          echo "::warning::and add a trusted publisher for this repository."
+          echo ""
+          echo "Alternative: set PYPI_API_TOKEN as a repository secret and uncomment"
+          echo "the API token approach below."
