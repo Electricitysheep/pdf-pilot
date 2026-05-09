@@ -51,6 +51,7 @@ jobs:
           pytest tests/test_detectors.py tests/test_router.py tests/test_engines.py::TestPyMuPDFEngine tests/test_quality.py \
             -v --tb=short \
             --cov=pdf_pilot --cov-report=xml --cov-report=term-missing
+        shell: bash
         env:
           PYTHONPATH: .
 
