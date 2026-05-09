@@ -1,6 +1,6 @@
 """配置管理"""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
 

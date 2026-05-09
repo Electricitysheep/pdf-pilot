@@ -1,8 +1,8 @@
 """检测器测试"""
 
-from pdf_pilot.detectors.scanner import is_scanned_pdf
 from pdf_pilot.detectors.complexity import detect_complexity
 from pdf_pilot.detectors.language import detect_language
+from pdf_pilot.detectors.scanner import is_scanned_pdf
 
 
 class TestScannerDetection:

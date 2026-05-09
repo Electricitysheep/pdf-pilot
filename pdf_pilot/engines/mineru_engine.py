@@ -8,7 +8,6 @@ from pdf_pilot.model import (
     Block,
     BlockType,
     ExtractedDocument,
-    Table,
 )
 
 logger = logging.getLogger(__name__)
@@ -55,8 +54,11 @@ class MinerUEngine(EngineBase):
     def extract(self, pdf_path: str) -> ExtractedDocument:
         """使用 MinerU 提取 PDF 内容"""
         try:
-            from magic_pdf.data.data_reader_writer import DataWriter, DataReader
-            from magic_pdf.pipe.OC_Pipe import OC_Pipe
+            from magic_pdf.data.data_reader_writer import (  # noqa: F401
+                DataReader,
+                DataWriter,
+            )
+            from magic_pdf.pipe.OC_Pipe import OC_Pipe  # noqa: F401
             from magic_pdf.pipe.UNI_Pipe import UNI_Pipe
         except ImportError:
             raise ImportError(

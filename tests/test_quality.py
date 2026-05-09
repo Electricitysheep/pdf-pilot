@@ -17,9 +17,6 @@ try:
     engine = DoclingEngine()
     if engine.is_available():
         # 尝试一次转换来检测是否稳定
-        import os
-        import tempfile
-        import subprocess
         test_code = '''
 from pdf_pilot.engines.docling_engine import DoclingEngine
 e = DoclingEngine()
@@ -72,7 +69,7 @@ class TestEnglishQuality:
 
         # Markdown 中应包含表格（以 | 分隔的行）
         md_lines = doc.raw_markdown.split("\n")
-        table_lines = [l for l in md_lines if "|" in l]
+        table_lines = [line for line in md_lines if "|" in line]
 
         assert len(table_lines) > 0, "应提取到表格内容"
 
@@ -97,9 +94,6 @@ class TestEnglishQuality:
 
         # 至少应有一些数学符号
         math_indicators = md.count("∈") + md.count("∑") + md.count("∫")
-        dollar_indicators = md.count("$")
-
-        has_math = has_inline_math or has_block_math or math_indicators > 0 or dollar_indicators > 0
 
         logger.info(
             f"  Formula detection: inline_math={has_inline_math}, "
@@ -148,7 +142,7 @@ class TestOutputFormat:
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / "test_output.md"
 
-        doc = convert(multi_column_pdf, output_path=output_path, engine="pymupdf")
+        convert(multi_column_pdf, output_path=output_path, engine="pymupdf")
 
         assert output_path.exists(), "Markdown 文件应被创建"
         content = output_path.read_text(encoding="utf-8")
@@ -159,7 +153,7 @@ class TestOutputFormat:
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / "test_output.docx"
 
-        doc = convert(multi_column_pdf, output_path=output_path, engine="pymupdf")
+        convert(multi_column_pdf, output_path=output_path, engine="pymupdf")
 
         assert output_path.exists(), "Word 文件应被创建"
         size = output_path.stat().st_size

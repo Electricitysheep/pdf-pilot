@@ -94,8 +94,8 @@ def main():
 
 def _list_engines():
     """列出可用引擎"""
-    from pdf_pilot.convert import _create_engines
     from pdf_pilot.config import Config
+    from pdf_pilot.convert import _create_engines
 
     config = Config()
     engines = _create_engines(config)
@@ -119,8 +119,8 @@ def _list_engines():
 
 def _convert_file(input_path: Path, args):
     """转换单个文件"""
-    from pdf_pilot.convert import convert
     from pdf_pilot.config import Config
+    from pdf_pilot.convert import convert
 
     # 确定输出路径
     output = args.output
@@ -153,7 +153,7 @@ def _convert_file(input_path: Path, args):
             config=config,
         )
 
-        print(f"\n转换完成!")
+        print("\n转换完成!")
         print(f"  页面数: {doc.page_count}")
         print(f"  引擎:   {doc.metadata.get('engine', 'unknown')}")
         print(f"  输出:   {output}")
@@ -170,8 +170,8 @@ def _convert_file(input_path: Path, args):
 
 def _batch_convert(input_dir: Path, args):
     """批量转换目录下的所有 PDF"""
-    from pdf_pilot.convert import convert
     from pdf_pilot.config import Config
+    from pdf_pilot.convert import convert
 
     pdfs = sorted(input_dir.glob("*.pdf"))
     if not pdfs:
