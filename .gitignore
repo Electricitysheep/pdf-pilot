@@ -11,6 +11,8 @@ build/
 /output/
 *.pdf.bak
 test_output/
+test_output_self/
+test_fixtures/
 tests/fixtures/*.pdf
 .pytest_cache/
 .ruff_cache/
@@ -20,3 +22,5 @@ tests/fixtures/*.pdf
 *.swo
 .DS_Store
 *.md.bak
+coverage.xml
+htmlcov/
