@@ -37,6 +37,9 @@
 | **Release workflow 修复** | ✅ | 移除 broken PyPI publish 步骤 |
 | **Usage Guide** | ✅ | 中英 README 都有完整使用指南 |
 | **AI Agent 集成指南** | ✅ | Claude Code, OpenClaw, OpenCode, Hermes |
+| **LangChain 集成** | ✅ | `pdf_pilot.integrations.langchain` 模块 |
+| **LlamaIndex 集成** | ✅ | `pdf_pilot.integrations.llamaindex` 模块 |
+| **Demo 录制脚本** | ✅ | asciinema 录制脚本 + 命令脚本 |
 
 ---
 
@@ -49,9 +52,7 @@
    - 添加仓库: Electricitysheep/pdf-pilot
    - 工作流文件: pypi-publish.yml
 
-2. **PAT 配置** — 需要 `workflow` scope 才能推送 workflow 文件
-   - 访问: https://github.com/settings/tokens
-   - 生成带 `workflow` scope 的 classic PAT
+2. ~~**PAT 配置**~~ — ✅ 已配置（含 workflow scope）
 
 3. **在线 Demo** — Colab notebook 已创建但需要测试验证
    - 文件: demo.ipynb
@@ -59,17 +60,18 @@
 
 ### 🟡 中优先级
 
-4. **CI 覆盖率报告** — CI 中已配置 codecov 但未实际上传
-   - 需要在 codecov.io 注册并启用
-   - 安装 codecov GitHub App
+4. **CI 覆盖率报告** — ci.yml 已更新，需要安装 codecov GitHub App
+   - 访问: https://github.com/apps/codecov/installations/new
+   - 选择 Electricitysheep/pdf-pilot 仓库
 
-5. **README GIF 演示** — 尚未添加终端录制 GIF
-   - 工具: asciinema + svg-term
-   - 预计 2-3 小时制作
+5. **README GIF 演示** — 录制脚本已创建（scripts/record_demo.sh + demo_commands.sh）
+   - 需要安装 asciinema + agg
+   - 实际录制并上传 GIF
 
-6. **LangChain/LlamaIndex 集成** — 成为 RAG 生态推荐工具
-   - 创建 `pdf_pilot.integrations` 模块
-   - 提供 `to_langchain_document()` 方法
+6. ~~**LangChain/LlamaIndex 集成**~~ — ✅ 已完成
+   - `pdf_pilot.integrations.langchain` 模块
+   - `pdf_pilot.integrations.llamaindex` 模块
+   - 中英文 README 已添加集成使用示例
 
 ### 🟢 低优先级
 
@@ -115,10 +117,10 @@
 
 **最需要的下一步行动**:
 1. 配置 PyPI 信任发布者（影响安装便利性）
-2. 配置 PAT workflow scope（影响自动化）
+2. 安装 codecov GitHub App（影响信任度）
 3. 创建 README GIF 演示（影响首屏转化率）
-4. 配置 codecov（影响信任度）
+4. 测试 Colab notebook 实际运行
 
-**最大优势**: 自动引擎路由 + 多引擎 fallback + 中英双 README
+**最大优势**: 自动引擎路由 + 多引擎 fallback + 中英双 README + RAG 生态集成
 
-**最大短板**: 无在线 demo 验证、无覆盖率报告、无 LangChain 集成
+**最大短板**: 无在线 demo 验证、无覆盖率报告（需 codecov app）、无 README GIF
