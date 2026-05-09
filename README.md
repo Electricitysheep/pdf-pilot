@@ -53,33 +53,133 @@ pip install -e .
 # Convert anything — just works
 pdf_pilot input.pdf -o output.md
 
-# Force a specific engine
-pdf_pilot input.pdf -o output.docx --engine mineru
-
-# Batch convert
-pdf_pilot ./pdfs/ -o ./output/
-
 # See available engines
 pdf_pilot --list-engines
 ```
 
+Full usage guide with examples → [Usage Guide](#usage-guide) below.
+
+## Usage Guide
+
+### Command Line (CLI)
+
+The CLI is the fastest way to convert PDFs. After installation, the `pdf_pilot` command is available.
+
+**1. Basic conversion — auto mode**
+
+Let pdf_pilot analyze the document and pick the best engine automatically:
+
+```bash
+pdf_pilot input.pdf -o output.md
+```
+
+Output format is determined by the file extension: `.md` for Markdown, `.docx` for Word.
+
+```bash
+# Convert to Word
+pdf_pilot input.pdf -o output.docx
+```
+
+**2. Force a specific engine**
+
+```bash
+# Use PyMuPDF (fastest, good for simple digital PDFs)
+pdf_pilot input.pdf -o output.md -e pymupdf
+
+# Use Docling (best for scanned, tables, formulas)
+pdf_pilot input.pdf -o output.md -e docling
+
+# Use MinerU (best for Chinese + complex documents, requires installation)
+pdf_pilot input.pdf -o output.md -e mineru
+```
+
+**3. Batch convert a directory**
+
+```bash
+# Convert all PDFs in a folder at once
+pdf_pilot ./pdfs/ -o ./output/
+
+# Batch to Word
+pdf_pilot ./pdfs/ -o ./output/ -f docx
+```
+
+**4. View available engines**
+
+```bash
+pdf_pilot --list-engines
+```
+
+Example output:
+```
+Available engines:
+--------------------------------------------------
+  docling            OK  (priority: 1)
+  pymupdf            OK  (priority: 3)
+  mineru             MISSING  (priority: 2)
+```
+
+**5. Verbose mode (see what's happening)**
+
+```bash
+pdf_pilot input.pdf -v
+```
+
+This shows which engine was selected, detection results, and processing time.
+
 ### Python API
 
+Import and use directly in your code:
+
 ```python
-from pdf_pilot import convert
+from pdf_pilot.convert import convert
 
-# Intelligent auto-routing — no config needed
+# Auto mode — simplest
 doc = convert("input.pdf", "output.md")
+print(f"Pages: {doc.page_count}, Engine: {doc.metadata['engine']}")
 
-# Manual engine selection
-doc = convert("input.pdf", output_path="output.md", engine="pymupdf")
-doc = convert("input.pdf", output_path="output.docx", engine="docling")
+# Specify engine
+doc = convert("input.pdf", engine="docling")
+doc = convert("input.pdf", "output.docx", engine="pymupdf")
 
-# Inspect extracted content
-print(f"Pages: {doc.page_count}")
-print(f"Blocks: {len(doc.blocks)}")
-print(f"Tables: {len(doc.tables)}")
+# Inspect structured content
+print(doc.raw_markdown)      # Full markdown text
+print(doc.blocks)            # Structured blocks (headings, paragraphs, etc.)
+print(doc.tables)            # Extracted tables
+print(doc.metadata)          # Engine, page count, etc.
 ```
+
+### How to Choose an Engine
+
+| Scenario | Recommended Engine | CLI Command |
+|---|---|---|
+| Don't know which to pick | `auto` (let the router decide) | `pdf_pilot input.pdf -e auto` |
+| Simple text PDF, digital original | `pymupdf` (fastest) | `pdf_pilot input.pdf -e pymupdf` |
+| Scanned document, photos, OCR needed | `docling` (built-in OCR) | `pdf_pilot input.pdf -e docling` |
+| Complex tables, academic papers | `docling` (TableFormer) | `pdf_pilot input.pdf -e docling` |
+| Chinese documents (requires install) | `mineru` (Chinese-optimized) | `pdf_pilot input.pdf -e mineru` |
+
+When in doubt, start with `auto`. The router analyzes scan status, complexity, and language to make the best choice.
+
+### Using with AI Assistants (Claude / Cursor / Copilot)
+
+Tell your AI assistant: *"Use pdf_pilot to convert this PDF to Markdown"* and it will execute the command for you. Or write Python code:
+
+```python
+# Paste this into your AI assistant's code environment
+from pdf_pilot.convert import convert
+doc = convert("input.pdf", "output.md", engine="auto")
+with open("output.md", "w", encoding="utf-8") as f:
+    f.write(doc.raw_markdown)
+print(f"Done — {doc.page_count} pages, {len(doc.raw_markdown)} characters")
+```
+
+## Use Cases
+
+- **RAG / LLM pipelines** — convert PDFs to clean Markdown for embedding
+- **Academic research** — extract papers with formulas and tables
+- **Document digitization** — batch convert scanned archives
+- **Business automation** — extract structured data from reports, invoices
+- **Content migration** — PDF to Word with formatting preserved
 
 ## Engine Comparison
 
@@ -167,14 +267,6 @@ pytest tests/test_quality.py -v
 # With HTML report
 pytest tests/test_quality.py --html=quality_report.html
 ```
-
-## Use Cases
-
-- **RAG / LLM pipelines** — convert PDFs to clean Markdown for embedding
-- **Academic research** — extract papers with formulas and tables
-- **Document digitization** — batch convert scanned archives
-- **Business automation** — extract structured data from reports, invoices
-- **Content migration** — PDF to Word with formatting preserved
 
 ## Integrations
 
