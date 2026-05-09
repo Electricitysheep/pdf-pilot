@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-description: Report a bug with pdf2doc
+description: Report a bug with pdf_pilot
 labels: [bug]
 body:
   - type: textarea
@@ -14,7 +14,7 @@ body:
       label: Steps to Reproduce
       description: |
         ```bash
-        pdf2doc input.pdf -o output.md --engine auto
+        pdf_pilot input.pdf -o output.md --engine auto
         ```
     validations:
       required: true
@@ -28,5 +28,5 @@ body:
       placeholder: "Windows 11 / Ubuntu 22.04"
   - type: input
     attributes:
-      label: pdf2doc Version
+      label: pdf_pilot Version
       placeholder: "0.1.0"

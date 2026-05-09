@@ -3,8 +3,8 @@
 import logging
 from pathlib import Path
 
-from pdf2doc.engines.base import EngineBase
-from pdf2doc.model import (
+from pdf_pilot.engines.base import EngineBase
+from pdf_pilot.model import (
     Block,
     BlockType,
     ExtractedDocument,

@@ -1,3 +1,3 @@
 """引擎注册表"""
 
-from pdf2doc.engines.base import EngineBase
+from pdf_pilot.engines.base import EngineBase

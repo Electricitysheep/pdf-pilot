@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from pdf2doc.model import ExtractedDocument
+from pdf_pilot.model import ExtractedDocument
 
 
 class EngineBase(ABC):

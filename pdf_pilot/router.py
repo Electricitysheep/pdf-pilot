@@ -3,10 +3,10 @@
 import logging
 from typing import Optional
 
-from pdf2doc.detectors.complexity import detect_complexity
-from pdf2doc.detectors.language import detect_language
-from pdf2doc.detectors.scanner import is_scanned_pdf
-from pdf2doc.engines.base import EngineBase
+from pdf_pilot.detectors.complexity import detect_complexity
+from pdf_pilot.detectors.language import detect_language
+from pdf_pilot.detectors.scanner import is_scanned_pdf
+from pdf_pilot.engines.base import EngineBase
 
 logger = logging.getLogger(__name__)
 

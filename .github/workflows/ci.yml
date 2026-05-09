@@ -30,7 +30,7 @@ jobs:
       - name: Run linter
         run: |
           pip install ruff
-          ruff check pdf2doc/ tests/
+          ruff check pdf_pilot/ tests/
 
       - name: Run tests
         run: |

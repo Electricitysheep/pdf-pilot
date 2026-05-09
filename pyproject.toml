@@ -54,6 +54,9 @@ Repository = "https://github.com/Electricitysheep/pdf_pilot"
 Issues = "https://github.com/Electricitysheep/pdf_pilot/issues"
 Changelog = "https://github.com/Electricitysheep/pdf_pilot/blob/main/CHANGELOG.md"
 
+[tool.setuptools.packages.find]
+include = ["pdf_pilot*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
