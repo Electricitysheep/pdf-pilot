@@ -35,57 +35,61 @@ def detect_complexity(pdf_path: str) -> ComplexityScore:
     if not pdf.exists():
         raise FileNotFoundError(f"PDF not found: {pdf_path}")
 
-    doc = pymupdf.open(str(pdf))
-    page_count = len(doc)
+    try:
+        doc = pymupdf.open(str(pdf))
+    except Exception as e:
+        logger.warning(f"Cannot open PDF for complexity detection: {e}")
+        return ComplexityScore()
 
-    total_tables = 0
-    total_formulas = 0
-    multi_column_pages = 0
-    check_pages = min(page_count, 5)
+    try:
+        page_count = len(doc)
 
-    for page_num in range(check_pages):
-        page = doc[page_num]
+        total_tables = 0
+        total_formulas = 0
+        multi_column_pages = 0
+        check_pages = min(page_count, 5)
 
-        # 检测表格
-        tabs = page.find_tables()
-        if tabs:
-            table_count = len(tabs.tables) if hasattr(tabs, 'tables') else 0
-            total_tables += table_count
+        for page_num in range(check_pages):
+            page = doc[page_num]
 
-        # 检测多栏
-        # 通过文本块布局判断
-        blocks = page.get_text("dict", flags=pymupdf.TEXTFLAGS_TEXT)["blocks"]
-        if _is_multi_column(blocks):
-            multi_column_pages += 1
+            # 检测表格
+            tabs = page.find_tables()
+            if tabs:
+                table_count = len(tabs.tables) if hasattr(tabs, 'tables') else 0
+                total_tables += table_count
 
-        # 检测公式（通过文本内容匹配）
-        text = page.get_text()
-        formula_count = _count_formulas(text)
-        total_formulas += formula_count
+            # 检测多栏
+            blocks = page.get_text("dict", flags=pymupdf.TEXTFLAGS_TEXT)["blocks"]
+            if _is_multi_column(blocks):
+                multi_column_pages += 1
 
-    doc.close()
+            # 检测公式（通过文本内容匹配）
+            text = page.get_text()
+            formula_count = _count_formulas(text)
+            total_formulas += formula_count
 
-    # 计算综合复杂度
-    has_tables = total_tables > 0
-    has_formulas = total_formulas > 0
-    has_multi_col = multi_column_pages > check_pages * 0.3
+        has_tables = total_tables > 0
+        has_formulas = total_formulas > 0
+        has_multi_col = multi_column_pages > check_pages * 0.3
 
-    complexity = "low"
-    score = sum([has_tables, has_formulas, has_multi_col])
-    if score >= 2:
-        complexity = "high"
-    elif score >= 1:
-        complexity = "medium"
+        complexity = "low"
+        score = sum([has_tables, has_formulas, has_multi_col])
+        if score >= 2:
+            complexity = "high"
+        elif score >= 1:
+            complexity = "medium"
 
-    return ComplexityScore(
-        has_tables=has_tables,
-        table_count=total_tables,
-        has_formulas=has_formulas,
-        formula_count=total_formulas,
-        has_multi_column=has_multi_col,
-        column_count=2 if has_multi_col else 1,
-        overall_complexity=complexity,
-    )
+        return ComplexityScore(
+            has_tables=has_tables,
+            table_count=total_tables,
+            has_formulas=has_formulas,
+            formula_count=total_formulas,
+            has_multi_column=has_multi_col,
+            column_count=2 if has_multi_col else 1,
+            overall_complexity=complexity,
+        )
+    finally:
+        doc.close()
 
 
 def _is_multi_column(blocks: list) -> bool:

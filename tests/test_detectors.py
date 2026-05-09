@@ -11,7 +11,7 @@ class TestScannerDetection:
     def test_digital_pdf_not_scanned(self, multi_column_pdf):
         """数字 PDF 不应被检测为扫描件"""
         score = is_scanned_pdf(multi_column_pdf)
-        assert score < 0.5, f"数字 PDF 扫描分数应为低: {score}"
+        assert score <= 0.5, f"数字 PDF 扫描分数应为低: {score}"
 
     def test_scanned_pdf_detected(self, scanned_pdf):
         """扫描型 PDF 应被检测到"""

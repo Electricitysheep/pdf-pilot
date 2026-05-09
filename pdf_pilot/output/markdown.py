@@ -21,6 +21,8 @@ def write_markdown(
     """
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
+    if output.exists():
+        logger.warning(f"Overwriting existing file: {output}")
     output.write_text(md_text, encoding="utf-8")
     logger.info(f"Markdown written to {output}")
     return output

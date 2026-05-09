@@ -1,6 +1,7 @@
 """MinerU (Magic-PDF) 引擎适配 — 中文/复杂文档最佳"""
 
 import logging
+import re
 from pathlib import Path
 
 from pdf_pilot.engines.base import EngineBase
@@ -151,7 +152,7 @@ class MinerUEngine(EngineBase):
                     content=content,
                     level=min(level, 6),
                 ))
-            elif line.strip().startswith(("- ", "* ", "1. ")):
+            elif re.match(r'^(\d+\.\s|[-*]\s)', line.strip()):
                 blocks.append(Block(
                     type=BlockType.LIST_ITEM,
                     content=line.strip(),

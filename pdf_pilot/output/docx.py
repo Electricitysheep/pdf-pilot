@@ -1,6 +1,7 @@
 """Word (docx) 输出格式化"""
 
 import logging
+import re
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -21,11 +22,17 @@ def write_docx(
     Returns:
         Path: 输出文件路径
     """
-    from docx import Document
-    from docx.shared import Pt
-
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        from docx import Document
+        from docx.shared import Pt
+    except ImportError as e:
+        raise ImportError(
+            "python-docx is required for .docx output. "
+            "Install with: pip install python-docx"
+        ) from e
 
     doc = Document()
 
@@ -65,7 +72,7 @@ def write_docx(
             continue
 
         # 列表项
-        elif line.strip().startswith(("- ", "* ")):
+        elif re.match(r'^(\d+\.\s|[-*]\s)', line.strip()):
             text = line.strip()[2:].strip()
             doc.add_paragraph(text, style="List Bullet")
 
@@ -95,7 +102,7 @@ def write_docx(
                 if (
                     not next_line or
                     next_line.startswith("#") or
-                    next_line.startswith(("- ", "* ", "1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9.")) or
+                    re.match(r'^(\d+\.\s|[-*]\s)', next_line) or
                     next_line.startswith("```")
                 ):
                     break

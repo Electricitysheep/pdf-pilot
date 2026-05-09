@@ -1,6 +1,7 @@
 """PyMuPDF4LLM 引擎适配 — 快速模式"""
 
 import logging
+import re
 from pathlib import Path
 
 from pdf_pilot.engines.base import EngineBase
@@ -54,11 +55,10 @@ class PyMuPDFEngine(EngineBase):
         page_count = 0
         try:
             import pymupdf
-            doc = pymupdf.open(str(pdf))
-            page_count = len(doc)
-            doc.close()
+            with pymupdf.open(str(pdf)) as doc:
+                page_count = len(doc)
         except Exception:
-            pass
+            page_count = 0
 
         # 解析 Markdown 为结构化 Block
         blocks = self._parse_markdown_to_blocks(md_text)
@@ -130,8 +130,8 @@ class PyMuPDFEngine(EngineBase):
                     level=min(level, 6),
                 ))
 
-            # 列表项检测
-            elif line.strip().startswith(("- ", "* ", "1. ", "2. ", "3. ")):
+            # 列表项检测（支持任意编号）
+            elif re.match(r'^(\d+\.\s|[-*]\s)', line.strip()):
                 blocks.append(Block(
                     type=BlockType.LIST_ITEM,
                     content=line.strip(),
@@ -152,7 +152,7 @@ class PyMuPDFEngine(EngineBase):
                 while i < len(lines):
                     next_line = lines[i].strip()
                     if not next_line or next_line.startswith("#") or \
-                       next_line.startswith(("- ", "* ", "1. ", "2. ", "3. ")) or \
+                       re.match(r'^(\d+\.\s|[-*]\s)', next_line) or \
                        next_line.startswith("```"):
                         break
                     paragraph_lines.append(next_line)

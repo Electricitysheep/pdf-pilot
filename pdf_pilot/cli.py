@@ -173,7 +173,7 @@ def _batch_convert(input_dir: Path, args):
     from pdf_pilot.config import Config
     from pdf_pilot.convert import convert
 
-    pdfs = sorted(input_dir.glob("*.pdf"))
+    pdfs = sorted([p for p in input_dir.iterdir() if p.suffix.lower() == ".pdf"])
     if not pdfs:
         print(f"在 {input_dir} 中未找到 PDF 文件")
         return

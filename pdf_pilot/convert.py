@@ -64,7 +64,7 @@ def convert(
     """
     if config is None:
         config = Config()
-        config.engine = engine
+    config.engine = engine
 
     input_path = Path(input_path)
     if not input_path.exists():
@@ -89,8 +89,10 @@ def convert(
 
         if suffix == ".docx":
             write_docx(doc.raw_markdown, output_path)
-        else:
+        elif suffix in (".md", ".markdown", ""):
             write_markdown(doc.raw_markdown, output_path)
+        else:
+            raise ValueError(f"Unsupported output format: {suffix}. Use .md or .docx")
 
     return doc
 
@@ -102,29 +104,33 @@ def _extract_with_fallback(
     config: Config,
 ) -> ExtractedDocument:
     """执行提取，失败时自动降级到其他引擎"""
+    tried: set[str] = set()
     last_error = None
+    current_engine = engine
 
-    for attempt in range(config.max_fallbacks + 1):
+    while len(tried) < len(router._engine_list):
+        if current_engine.name in tried:
+            break
+        tried.add(current_engine.name)
         try:
             logger.info(
-                f"Extraction attempt {attempt + 1} "
-                f"with engine: {engine.name}"
+                f"Extracting with engine: {current_engine.name}"
             )
-            return engine.extract(pdf_path)
+            return current_engine.extract(pdf_path)
         except Exception as e:
             last_error = e
             logger.warning(
-                f"Engine {engine.name} failed: {e}"
+                f"Engine {current_engine.name} failed: {e}"
             )
 
-            # 尝试降级
+            # 选择下一个未尝试过的最佳引擎
             available = [
                 e for e in router._engine_list
-                if e.name != engine.name
+                if e.name not in tried
             ]
             if available:
-                engine = min(available, key=lambda e: e.priority)
-                logger.info(f"Falling back to: {engine.name}")
+                current_engine = min(available, key=lambda e: e.priority)
+                logger.info(f"Falling back to: {current_engine.name}")
             else:
                 break
 

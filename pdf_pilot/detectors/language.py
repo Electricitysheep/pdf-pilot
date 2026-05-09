@@ -6,6 +6,18 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
+def _is_cjk(char: str) -> bool:
+    """判断字符是否为 CJK 文字（含扩展区、假名、谚文）"""
+    cp = ord(char)
+    return (
+        0x4E00 <= cp <= 0x9FFF or    # CJK Unified Ideographs
+        0x3400 <= cp <= 0x4DBF or    # CJK Extension A
+        0x3040 <= cp <= 0x30FF or    # Hiragana + Katakana
+        0xAC00 <= cp <= 0xD7AF or    # Hangul
+        0xF900 <= cp <= 0xFAFF       # CJK Compatibility
+    )
+
+
 def detect_language(pdf_path: str) -> str:
     """检测 PDF 的主要语言
 
@@ -22,32 +34,37 @@ def detect_language(pdf_path: str) -> str:
     if not pdf.exists():
         raise FileNotFoundError(f"PDF not found: {pdf_path}")
 
-    doc = pymupdf.open(str(pdf))
-    page_count = len(doc)
-
-    if page_count == 0:
-        doc.close()
+    try:
+        doc = pymupdf.open(str(pdf))
+    except Exception as e:
+        logger.warning(f"Cannot open PDF for language detection: {e}")
         return "unknown"
 
-    # 抽样检查前5页
-    sample_pages = min(page_count, 5)
-    total_chars = 0
-    chinese_chars = 0
-    latin_chars = 0
+    try:
+        page_count = len(doc)
 
-    for page_num in range(sample_pages):
-        page = doc[page_num]
-        text = page.get_text()
+        if page_count == 0:
+            return "unknown"
 
-        for char in text:
-            if '一' <= char <= '鿿':
-                chinese_chars += 1
+        sample_pages = min(page_count, 5)
+        total_chars = 0
+        chinese_chars = 0
+        latin_chars = 0
+
+        for page_num in range(sample_pages):
+            page = doc[page_num]
+            text = page.get_text()
+
+            for char in text:
+                if char.isspace():
+                    continue
                 total_chars += 1
-            elif 'A' <= char <= 'Z' or 'a' <= char <= 'z':
-                latin_chars += 1
-                total_chars += 1
-
-    doc.close()
+                if _is_cjk(char):
+                    chinese_chars += 1
+                elif char.isalpha():
+                    latin_chars += 1
+    finally:
+        doc.close()
 
     if total_chars == 0:
         return "unknown"
