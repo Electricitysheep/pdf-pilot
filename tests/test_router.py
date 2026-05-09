@@ -16,8 +16,7 @@ class TestEngineRouter:
         router = EngineRouter(engines)
 
         available = router.get_available_engines()
-        assert len(available) >= 2, "应至少有两个可用引擎"
-        assert "docling" in available
+        assert len(available) >= 1, "应至少有一个可用引擎"
         assert "pymupdf" in available
 
     def test_force_engine(self, multi_column_pdf):

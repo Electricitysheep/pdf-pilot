@@ -27,6 +27,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
+      - name: Download test fixtures
+        run: |
+          mkdir -p tests/fixtures
+          # Multi-column PDF (from pdfplumber test suite)
+          curl -sL -o tests/fixtures/chelsea_pdta.pdf "https://raw.githubusercontent.com/jsvine/pdfplumber/v7.2.3/tests/pdfs/chelsea.pdf"
+          # Table PDF
+          curl -sL -o tests/fixtures/federal-register.pdf "https://raw.githubusercontent.com/jsvine/pdfplumber/v7.2.3/tests/pdfs/federal-register.pdf"
+          # Academic paper (Attention Is All You Need)
+          curl -sL -o tests/fixtures/attention.pdf "https://arxiv.org/pdf/1706.03762"
+          # Scanned PDF (W3C sample)
+          curl -sL -o tests/fixtures/scanned.pdf "https://www.w3.org/WAI/WCAG21/Techniques/pdf/img/table-data复杂性.pdf"
+        shell: bash
+
       - name: Run linter
         run: |
           pip install ruff
