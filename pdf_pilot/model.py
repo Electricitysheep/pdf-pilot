@@ -19,6 +19,7 @@ class BlockType(Enum):
 @dataclass
 class Block:
     """文档中的一个内容块"""
+
     type: BlockType
     content: str
     level: int = 0  # 标题层级 (1-6)
@@ -28,6 +29,7 @@ class Block:
 @dataclass
 class TableCell:
     """表格单元格"""
+
     text: str
     row_span: int = 1
     col_span: int = 1
@@ -36,6 +38,7 @@ class TableCell:
 @dataclass
 class Table:
     """结构化表格"""
+
     caption: str = ""
     headers: list[str] = field(default_factory=list)
     rows: list[list[str]] = field(default_factory=list)
@@ -47,6 +50,7 @@ class Table:
 @dataclass
 class Image:
     """图片引用"""
+
     path: str = ""
     description: str = ""
     caption: str = ""
@@ -57,6 +61,7 @@ class Image:
 @dataclass
 class Formula:
     """数学公式"""
+
     latex: str  # LaTeX 表达式
     inline: bool = False  # 行内公式 vs 独立公式
     page: int = 0
@@ -65,6 +70,7 @@ class Formula:
 @dataclass
 class ExtractedDocument:
     """所有引擎统一输出的文档结构"""
+
     title: str = ""
     blocks: list[Block] = field(default_factory=list)
     tables: list[Table] = field(default_factory=list)

@@ -113,21 +113,14 @@ def _extract_with_fallback(
             break
         tried.add(current_engine.name)
         try:
-            logger.info(
-                f"Extracting with engine: {current_engine.name}"
-            )
+            logger.info(f"Extracting with engine: {current_engine.name}")
             return current_engine.extract(pdf_path)
         except Exception as e:
             last_error = e
-            logger.warning(
-                f"Engine {current_engine.name} failed: {e}"
-            )
+            logger.warning(f"Engine {current_engine.name} failed: {e}")
 
             # 选择下一个未尝试过的最佳引擎
-            available = [
-                e for e in router._engine_list
-                if e.name not in tried
-            ]
+            available = [e for e in router._engine_list if e.name not in tried]
             if available:
                 current_engine = min(available, key=lambda e: e.priority)
                 logger.info(f"Falling back to: {current_engine.name}")

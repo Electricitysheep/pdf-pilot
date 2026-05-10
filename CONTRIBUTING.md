@@ -9,14 +9,21 @@ Thank you for your interest in contributing! pdf_pilot is a multi-engine PDF con
 git clone https://github.com/Electricitysheep/pdf-pilot.git
 cd pdf-pilot
 
-# Install with dev dependencies
-pip install -e ".[dev]"
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Sync dependencies (creates .venv automatically)
+uv sync --dev
+
+# Activate the virtual environment
+source .venv/bin/activate  # Linux/macOS
+# or: .venv\Scripts\activate  # Windows
 
 # Run tests
-pytest tests/ -v
+uv run pytest tests/ -v
 
 # Run self-test (downloads real PDFs)
-python self_test.py
+uv run python self_test.py
 ```
 
 ## Project Structure
@@ -44,15 +51,16 @@ pdf_pilot/
 ## Code Style
 
 - Follow PEP 8 with 88-character line length
-- Run `ruff check .` before submitting
+- Run `uv run ruff check .` before submitting
+- Run `uv run ruff format .` to format code
 - Add type hints to function signatures
 - Docstrings: one-line for obvious functions, multi-line for complex logic
 
 ## Testing
 
-- **Unit tests**: `pytest tests/ -v` (30 tests)
-- **End-to-end**: `python self_test.py` (41 tests, downloads real PDFs)
-- **Quality tests**: `pytest tests/test_quality.py -v`
+- **Unit tests**: `uv run pytest tests/ -v` (30 tests)
+- **End-to-end**: `uv run python self_test.py` (41 tests, downloads real PDFs)
+- **Quality tests**: `uv run pytest tests/test_quality.py -v`
 
 ## Pull Request Guidelines
 

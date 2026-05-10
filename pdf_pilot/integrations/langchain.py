@@ -87,9 +87,7 @@ def to_langchain_documents(
 
                     docs.append(LCDoc(page_content=block.content, metadata=meta))
                 except ImportError:
-                    raise ImportError(
-                        "langchain is required. pip install langchain"
-                    )
+                    raise ImportError("langchain is required. pip install langchain")
         else:
             doc = to_langchain_document(path, engine=engine)
             docs.append(doc)

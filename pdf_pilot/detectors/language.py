@@ -10,11 +10,11 @@ def _is_cjk(char: str) -> bool:
     """判断字符是否为 CJK 文字（含扩展区、假名、谚文）"""
     cp = ord(char)
     return (
-        0x4E00 <= cp <= 0x9FFF or    # CJK Unified Ideographs
-        0x3400 <= cp <= 0x4DBF or    # CJK Extension A
-        0x3040 <= cp <= 0x30FF or    # Hiragana + Katakana
-        0xAC00 <= cp <= 0xD7AF or    # Hangul
-        0xF900 <= cp <= 0xFAFF       # CJK Compatibility
+        0x4E00 <= cp <= 0x9FFF  # CJK Unified Ideographs
+        or 0x3400 <= cp <= 0x4DBF  # CJK Extension A
+        or 0x3040 <= cp <= 0x30FF  # Hiragana + Katakana
+        or 0xAC00 <= cp <= 0xD7AF  # Hangul
+        or 0xF900 <= cp <= 0xFAFF  # CJK Compatibility
     )
 
 

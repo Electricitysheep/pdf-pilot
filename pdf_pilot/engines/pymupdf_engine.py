@@ -36,6 +36,7 @@ class PyMuPDFEngine(EngineBase):
     def is_available(self) -> bool:
         try:
             import pymupdf4llm  # noqa: F401
+
             return True
         except ImportError:
             return False
@@ -55,6 +56,7 @@ class PyMuPDFEngine(EngineBase):
         page_count = 0
         try:
             import pymupdf
+
             with pymupdf.open(str(pdf)) as doc:
                 page_count = len(doc)
         except Exception:
@@ -64,7 +66,9 @@ class PyMuPDFEngine(EngineBase):
         blocks = self._parse_markdown_to_blocks(md_text)
 
         return ExtractedDocument(
-            title=blocks[0].content if blocks and blocks[0].type == BlockType.HEADING else "",
+            title=blocks[0].content
+            if blocks and blocks[0].type == BlockType.HEADING
+            else "",
             blocks=blocks,
             raw_markdown=md_text,
             metadata={
@@ -91,10 +95,12 @@ class PyMuPDFEngine(EngineBase):
             if line.strip().startswith("```"):
                 if in_code_block:
                     # 结束代码块
-                    blocks.append(Block(
-                        type=BlockType.CODE,
-                        content="\n".join(code_lines),
-                    ))
+                    blocks.append(
+                        Block(
+                            type=BlockType.CODE,
+                            content="\n".join(code_lines),
+                        )
+                    )
                     code_lines = []
                     in_code_block = False
                 else:
@@ -124,25 +130,31 @@ class PyMuPDFEngine(EngineBase):
                 content = line[level:].strip()
                 if content.startswith(" "):
                     content = content[1:]
-                blocks.append(Block(
-                    type=BlockType.HEADING,
-                    content=content,
-                    level=min(level, 6),
-                ))
+                blocks.append(
+                    Block(
+                        type=BlockType.HEADING,
+                        content=content,
+                        level=min(level, 6),
+                    )
+                )
 
             # 列表项检测（支持任意编号）
-            elif re.match(r'^(\d+\.\s|[-*]\s)', line.strip()):
-                blocks.append(Block(
-                    type=BlockType.LIST_ITEM,
-                    content=line.strip(),
-                ))
+            elif re.match(r"^(\d+\.\s|[-*]\s)", line.strip()):
+                blocks.append(
+                    Block(
+                        type=BlockType.LIST_ITEM,
+                        content=line.strip(),
+                    )
+                )
 
             # 表格行检测
             elif "|" in line and ("---" in line or line.strip().startswith("|")):
-                blocks.append(Block(
-                    type=BlockType.TABLE,
-                    content=line.strip(),
-                ))
+                blocks.append(
+                    Block(
+                        type=BlockType.TABLE,
+                        content=line.strip(),
+                    )
+                )
 
             # 普通段落
             else:
@@ -151,16 +163,21 @@ class PyMuPDFEngine(EngineBase):
                 i += 1
                 while i < len(lines):
                     next_line = lines[i].strip()
-                    if not next_line or next_line.startswith("#") or \
-                       re.match(r'^(\d+\.\s|[-*]\s)', next_line) or \
-                       next_line.startswith("```"):
+                    if (
+                        not next_line
+                        or next_line.startswith("#")
+                        or re.match(r"^(\d+\.\s|[-*]\s)", next_line)
+                        or next_line.startswith("```")
+                    ):
                         break
                     paragraph_lines.append(next_line)
                     i += 1
-                blocks.append(Block(
-                    type=BlockType.PARAGRAPH,
-                    content=" ".join(paragraph_lines),
-                ))
+                blocks.append(
+                    Block(
+                        type=BlockType.PARAGRAPH,
+                        content=" ".join(paragraph_lines),
+                    )
+                )
                 continue
 
             i += 1

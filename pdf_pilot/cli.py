@@ -32,18 +32,21 @@ def main():
         default=None,
     )
     parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         help="输出路径（文件或目录）",
         default=None,
     )
     parser.add_argument(
-        "-e", "--engine",
+        "-e",
+        "--engine",
         choices=["auto", "docling", "mineru", "pymupdf"],
         default="auto",
         help="选择引擎（默认: auto 自动选择）",
     )
     parser.add_argument(
-        "-f", "--format",
+        "-f",
+        "--format",
         choices=["md", "docx"],
         default=None,
         help="输出格式（默认: md）",
@@ -59,7 +62,8 @@ def main():
         help="转换后运行质量验证",
     )
     parser.add_argument(
-        "-v", "--verbose",
+        "-v",
+        "--verbose",
         action="store_true",
         help="详细日志输出",
     )
@@ -113,7 +117,9 @@ def _list_engines():
         for engine in unavailable:
             if engine.name == "mineru":
                 print("  mineru: pip install magic-pdf")
-                print("    (注意: 需要 Python 3.10-3.13，与 pymupdf4llm 有 PyMuPDF 版本冲突)")
+                print(
+                    "    (注意: 需要 Python 3.10-3.13，与 pymupdf4llm 有 PyMuPDF 版本冲突)"
+                )
         print()
 
 

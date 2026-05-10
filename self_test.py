@@ -14,11 +14,9 @@
     8. 批量转换测试
 """
 
-import os
+import shutil
 import sys
 import time
-import shutil
-import tempfile
 import urllib.request
 from pathlib import Path
 
@@ -33,9 +31,9 @@ RESET = "\033[0m"
 
 
 def section(title: str):
-    print(f"\n{BLUE}{'='*60}{RESET}")
+    print(f"\n{BLUE}{'=' * 60}{RESET}")
     print(f"{BLUE}{BOLD}  {title}{RESET}")
-    print(f"{BLUE}{'='*60}{RESET}")
+    print(f"{BLUE}{'=' * 60}{RESET}")
 
 
 def ok(msg: str):
@@ -73,6 +71,7 @@ def check(condition: bool, msg: str):
 
 # ---------- 1. 下载测试 PDF ----------
 
+
 def download(url: str, path: Path, timeout: int = 60) -> bool:
     """下载文件"""
     try:
@@ -99,26 +98,46 @@ def generate_pdfs(fixtures: Path):
     y = 50
     content = [
         ("Introduction", 14, True),
-        ("Natural language processing has seen remarkable progress in recent years. "
-         "The Transformer architecture has become the de facto standard for many NLP tasks, "
-         "including machine translation, text summarization, and question answering. "
-         "These models process sequential data using self-attention mechanisms that "
-         "capture long-range dependencies more effectively than recurrent approaches.", 10, False),
+        (
+            "Natural language processing has seen remarkable progress in recent years. "
+            "The Transformer architecture has become the de facto standard for many NLP tasks, "
+            "including machine translation, text summarization, and question answering. "
+            "These models process sequential data using self-attention mechanisms that "
+            "capture long-range dependencies more effectively than recurrent approaches.",
+            10,
+            False,
+        ),
         ("Background", 14, True),
-        ("Previous work on sequence transduction has been dominated by recurrent and "
-         "convolutional neural networks. While these architectures have been effective, "
-         "they suffer from sequential computation that limits parallelization.", 10, False),
+        (
+            "Previous work on sequence transduction has been dominated by recurrent and "
+            "convolutional neural networks. While these architectures have been effective, "
+            "they suffer from sequential computation that limits parallelization.",
+            10,
+            False,
+        ),
         ("Method", 14, True),
-        ("We propose a novel approach based entirely on self-attention mechanisms, "
-         "eliminating recurrence and convolutions entirely. Our architecture processes "
-         "all positions in parallel, enabling efficient training on modern hardware.", 10, False),
+        (
+            "We propose a novel approach based entirely on self-attention mechanisms, "
+            "eliminating recurrence and convolutions entirely. Our architecture processes "
+            "all positions in parallel, enabling efficient training on modern hardware.",
+            10,
+            False,
+        ),
         ("Results", 14, True),
-        ("Our model achieves state-of-the-art results on multiple translation benchmarks, "
-         "with quality improvements that scale significantly with model size. "
-         "Training time is reduced by an order of magnitude compared to previous approaches.", 10, False),
+        (
+            "Our model achieves state-of-the-art results on multiple translation benchmarks, "
+            "with quality improvements that scale significantly with model size. "
+            "Training time is reduced by an order of magnitude compared to previous approaches.",
+            10,
+            False,
+        ),
         ("Conclusion", 14, True),
-        ("We have demonstrated that self-attention alone is sufficient for high-quality "
-         "sequence modeling. Future work will extend to multimodal and multilingual settings.", 10, False),
+        (
+            "We have demonstrated that self-attention alone is sufficient for high-quality "
+            "sequence modeling. Future work will extend to multimodal and multilingual settings.",
+            10,
+            False,
+        ),
     ]
     for text, size, is_heading in content:
         page.insert_text((50, y), text, fontsize=size)
@@ -128,7 +147,7 @@ def generate_pdfs(fixtures: Path):
             y = 50
     doc.save(str(fixtures / "chelsea_pdta.pdf"))
     doc.close()
-    print(f"    生成: chelsea_pdta.pdf")
+    print("    生成: chelsea_pdta.pdf")
 
     # 表格 PDF
     doc = fitz.open()
@@ -151,7 +170,7 @@ def generate_pdfs(fixtures: Path):
         y += 20
     doc.save(str(fixtures / "federal-register.pdf"))
     doc.close()
-    print(f"    生成: federal-register.pdf")
+    print("    生成: federal-register.pdf")
 
     # 扫描风格 PDF (极少文本)
     doc = fitz.open()
@@ -160,7 +179,7 @@ def generate_pdfs(fixtures: Path):
         page.insert_text((50, 50), "Scanned Document Sample", fontsize=8)
     doc.save(str(fixtures / "scanned.pdf"))
     doc.close()
-    print(f"    生成: scanned.pdf")
+    print("    生成: scanned.pdf")
 
 
 def download_fixtures(fixtures: Path):
@@ -181,13 +200,17 @@ def download_fixtures(fixtures: Path):
 
     # 检查是否需要生成
     needed = ["chelsea_pdta.pdf", "federal-register.pdf", "scanned.pdf"]
-    need_gen = any(not (fixtures / n).exists() or (fixtures / n).stat().st_size < 1024 for n in needed)
+    need_gen = any(
+        not (fixtures / n).exists() or (fixtures / n).stat().st_size < 1024
+        for n in needed
+    )
     if need_gen:
         info("生成测试 PDF (下载不完整)")
         generate_pdfs(fixtures)
 
 
 # ---------- 2. 边界情况 PDF ----------
+
 
 def create_edge_case_pdfs(fixtures: Path):
     """创建边界情况测试文件"""
@@ -207,13 +230,20 @@ def create_edge_case_pdfs(fixtures: Path):
     page = doc.new_page()
     page.insert_text((50, 50), "Secret Document", fontsize=12)
     try:
-        doc.save(str(fixtures / "encrypted.pdf"), encryption=fitz.PDF_ENCRYPT_AES_256,
-                 user_pw="test123", owner_pw="owner456")
+        doc.save(
+            str(fixtures / "encrypted.pdf"),
+            encryption=fitz.PDF_ENCRYPT_AES_256,
+            user_pw="test123",
+            owner_pw="owner456",
+        )
     except AttributeError:
         # Fallback for older pymupdf
-        doc.save(str(fixtures / "encrypted.pdf"),
-                 encryption=fitz.PDF_ENCRYPT_RC4_40,
-                 user_pw="test123", owner_pw="owner456")
+        doc.save(
+            str(fixtures / "encrypted.pdf"),
+            encryption=fitz.PDF_ENCRYPT_RC4_40,
+            user_pw="test123",
+            owner_pw="owner456",
+        )
     doc.close()
 
     # 单行 PDF
@@ -227,20 +257,25 @@ def create_edge_case_pdfs(fixtures: Path):
     doc = fitz.open()
     for i in range(20):
         page = doc.new_page()
-        page.insert_text((50, 50), f"Page {i+1} Content", fontsize=12)
+        page.insert_text((50, 50), f"Page {i + 1} Content", fontsize=12)
         for j in range(10):
-            page.insert_text((50, 50 + (j+1)*20), f"Line {j+1} on page {i+1}: This is test content for multi-page testing.", fontsize=9)
+            page.insert_text(
+                (50, 50 + (j + 1) * 20),
+                f"Line {j + 1} on page {i + 1}: This is test content for multi-page testing.",
+                fontsize=9,
+            )
     doc.save(str(fixtures / "large.pdf"))
     doc.close()
 
 
 # ---------- 3. 检测器测试 ----------
 
+
 def test_detectors(fixtures: Path):
     section("2. 检测器测试")
-    from pdf_pilot.detectors.scanner import is_scanned_pdf
     from pdf_pilot.detectors.complexity import detect_complexity
     from pdf_pilot.detectors.language import detect_language
+    from pdf_pilot.detectors.scanner import is_scanned_pdf
 
     # 扫描检测
     info("--- 扫描检测 ---")
@@ -260,7 +295,10 @@ def test_detectors(fixtures: Path):
     # 复杂度检测
     info("--- 复杂度检测 ---")
     cx = detect_complexity(str(fixtures / "chelsea_pdta.pdf"))
-    check(cx.overall_complexity in ("low", "medium", "high"), f"多栏 PDF 复杂度: {cx.overall_complexity}")
+    check(
+        cx.overall_complexity in ("low", "medium", "high"),
+        f"多栏 PDF 复杂度: {cx.overall_complexity}",
+    )
 
     cx = detect_complexity(str(fixtures / "federal-register.pdf"))
     check(cx.table_count >= 0, f"表格 PDF 检测: {cx.table_count} 个表格")
@@ -278,6 +316,7 @@ def test_detectors(fixtures: Path):
 
 # ---------- 4. 引擎测试 ----------
 
+
 def test_engines(fixtures: Path):
     section("3. 引擎测试")
     from pdf_pilot.engines.pymupdf_engine import PyMuPDFEngine
@@ -292,7 +331,10 @@ def test_engines(fixtures: Path):
     t0 = time.time()
     doc = engine.extract(str(fixtures / "chelsea_pdta.pdf"))
     elapsed = time.time() - t0
-    check(len(doc.raw_markdown) > 10, f"提取内容长度: {len(doc.raw_markdown)} chars, 耗时: {elapsed:.1f}s")
+    check(
+        len(doc.raw_markdown) > 10,
+        f"提取内容长度: {len(doc.raw_markdown)} chars, 耗时: {elapsed:.1f}s",
+    )
     check(len(doc.blocks) > 0, f"结构化 Block 数: {len(doc.blocks)}")
     check(doc.page_count > 0, f"页数: {doc.page_count}")
 
@@ -308,7 +350,10 @@ def test_engines(fixtures: Path):
         t0 = time.time()
         doc = engine.extract(str(fixtures / "attention.pdf"))
         elapsed = time.time() - t0
-        check(len(doc.raw_markdown) > 500, f"学术论文提取: {len(doc.raw_markdown)} chars, {elapsed:.1f}s")
+        check(
+            len(doc.raw_markdown) > 500,
+            f"学术论文提取: {len(doc.raw_markdown)} chars, {elapsed:.1f}s",
+        )
     else:
         warn("跳过学术 PDF (未下载)")
 
@@ -316,12 +361,16 @@ def test_engines(fixtures: Path):
     info("--- Docling 引擎 ---")
     try:
         from pdf_pilot.engines.docling_engine import DoclingEngine
+
         engine = DoclingEngine()
         if engine.is_available():
             t0 = time.time()
             doc = engine.extract(str(fixtures / "chelsea_pdta.pdf"))
             elapsed = time.time() - t0
-            check(len(doc.raw_markdown) > 100, f"Docling 提取: {len(doc.raw_markdown)} chars, {elapsed:.1f}s")
+            check(
+                len(doc.raw_markdown) > 100,
+                f"Docling 提取: {len(doc.raw_markdown)} chars, {elapsed:.1f}s",
+            )
         else:
             warn("Docling 不可用 (未安装)")
     except Exception as e:
@@ -331,10 +380,14 @@ def test_engines(fixtures: Path):
     info("--- MinerU 引擎 ---")
     try:
         from pdf_pilot.engines.mineru_engine import MinerUEngine
+
         engine = MinerUEngine()
         if engine.is_available():
             doc = engine.extract(str(fixtures / "chelsea_pdta.pdf"))
-            check(len(doc.raw_markdown) > 50, f"MinerU 提取: {len(doc.raw_markdown)} chars")
+            check(
+                len(doc.raw_markdown) > 50,
+                f"MinerU 提取: {len(doc.raw_markdown)} chars",
+            )
         else:
             warn("MinerU 不可用 (需要 magic-pdf)")
     except Exception as e:
@@ -342,6 +395,7 @@ def test_engines(fixtures: Path):
 
 
 # ---------- 5. 路由器测试 ----------
+
 
 def test_router(fixtures: Path):
     section("4. 路由器测试")
@@ -367,10 +421,14 @@ def test_router(fixtures: Path):
 
     info("--- 降级测试 ---")
     engine = router.route(str(fixtures / "chelsea_pdta.pdf"), force_engine="mineru")
-    check(engine.name in ("docling", "pymupdf", "mineru"), f"强制 mineru 降级: {engine.name}")
+    check(
+        engine.name in ("docling", "pymupdf", "mineru"),
+        f"强制 mineru 降级: {engine.name}",
+    )
 
 
 # ---------- 6. 输出测试 ----------
+
 
 def test_output(fixtures: Path, tmp_dir: Path):
     section("5. 输出测试")
@@ -379,7 +437,9 @@ def test_output(fixtures: Path, tmp_dir: Path):
     # Markdown 输出
     info("--- Markdown 输出 ---")
     md_path = tmp_dir / "output.md"
-    doc = convert(str(fixtures / "chelsea_pdta.pdf"), output_path=str(md_path), engine="pymupdf")
+    _ = convert(
+        str(fixtures / "chelsea_pdta.pdf"), output_path=str(md_path), engine="pymupdf"
+    )
     check(md_path.exists(), "Markdown 文件已创建")
     check(md_path.stat().st_size > 10, f"Markdown 大小: {md_path.stat().st_size} bytes")
 
@@ -389,15 +449,23 @@ def test_output(fixtures: Path, tmp_dir: Path):
     # Word 输出
     info("--- Word 输出 ---")
     docx_path = tmp_dir / "output.docx"
-    doc = convert(str(fixtures / "chelsea_pdta.pdf"), output_path=str(docx_path), engine="pymupdf")
+    _ = convert(
+        str(fixtures / "chelsea_pdta.pdf"), output_path=str(docx_path), engine="pymupdf"
+    )
     check(docx_path.exists(), "Word 文件已创建")
-    check(docx_path.stat().st_size > 1000, f"Word 大小: {docx_path.stat().st_size} bytes")
+    check(
+        docx_path.stat().st_size > 1000, f"Word 大小: {docx_path.stat().st_size} bytes"
+    )
 
     # 不支持的格式
     info("--- 不支持的格式 ---")
     bad_path = tmp_dir / "output.txt"
     try:
-        convert(str(fixtures / "chelsea_pdta.pdf"), output_path=str(bad_path), engine="pymupdf")
+        convert(
+            str(fixtures / "chelsea_pdta.pdf"),
+            output_path=str(bad_path),
+            engine="pymupdf",
+        )
         check(False, "应拒绝不支持的输出格式")
     except ValueError as e:
         check("Unsupported" in str(e), f"正确拒绝: {e}")
@@ -407,6 +475,7 @@ def test_output(fixtures: Path, tmp_dir: Path):
 
 # ---------- 7. CLI 测试 ----------
 
+
 def test_cli(fixtures: Path, tmp_dir: Path):
     section("6. CLI 测试")
     import subprocess
@@ -415,7 +484,9 @@ def test_cli(fixtures: Path, tmp_dir: Path):
     info("--- list-engines ---")
     result = subprocess.run(
         [sys.executable, "-m", "pdf_pilot.cli", "--list-engines"],
-        capture_output=True, text=True, cwd=Path(__file__).parent,
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).parent,
     )
     check(result.returncode == 0, f"list-engines 退出码: {result.returncode}")
     check("pymupdf" in result.stdout, f"包含 pymupdf: {'pymupdf' in result.stdout}")
@@ -424,9 +495,19 @@ def test_cli(fixtures: Path, tmp_dir: Path):
     info("--- 单文件转换 ---")
     output_md = tmp_dir / "cli_output.md"
     result = subprocess.run(
-        [sys.executable, "-m", "pdf_pilot.cli",
-         str(fixtures / "chelsea_pdta.pdf"), "-o", str(output_md), "-e", "pymupdf"],
-        capture_output=True, text=True, cwd=Path(__file__).parent,
+        [
+            sys.executable,
+            "-m",
+            "pdf_pilot.cli",
+            str(fixtures / "chelsea_pdta.pdf"),
+            "-o",
+            str(output_md),
+            "-e",
+            "pymupdf",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).parent,
     )
     check(result.returncode == 0, f"CLI 转换退出码: {result.returncode}")
     check(output_md.exists(), "CLI 输出文件已创建")
@@ -434,14 +515,24 @@ def test_cli(fixtures: Path, tmp_dir: Path):
     # verbose
     info("--- verbose 模式 ---")
     result = subprocess.run(
-        [sys.executable, "-m", "pdf_pilot.cli",
-         str(fixtures / "chelsea_pdta.pdf"), "-e", "pymupdf", "-v"],
-        capture_output=True, text=True, cwd=Path(__file__).parent,
+        [
+            sys.executable,
+            "-m",
+            "pdf_pilot.cli",
+            str(fixtures / "chelsea_pdta.pdf"),
+            "-e",
+            "pymupdf",
+            "-v",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).parent,
     )
     check(result.returncode == 0, f"verbose 模式正常: {result.returncode == 0}")
 
 
 # ---------- 8. 边界情况测试 ----------
+
 
 def test_edge_cases(fixtures: Path, tmp_dir: Path):
     section("7. 边界情况测试")
@@ -460,19 +551,31 @@ def test_edge_cases(fixtures: Path, tmp_dir: Path):
     try:
         doc = convert(str(fixtures / "corrupted.pdf"), engine="pymupdf")
         # Docling catches errors internally and returns empty result
-        check(len(doc.raw_markdown) == 0, f"损坏 PDF 返回空内容: {len(doc.raw_markdown)} chars")
+        check(
+            len(doc.raw_markdown) == 0,
+            f"损坏 PDF 返回空内容: {len(doc.raw_markdown)} chars",
+        )
     except Exception as e:
-        check("password" not in str(e).lower() or "corrupt" in str(e).lower() or "cannot" in str(e).lower() or
-              "failed" in str(e).lower() or "error" in str(e).lower() or "invalid" in str(e).lower() or
-              "file" in str(e).lower(),
-              f"损坏 PDF 正确报错: {type(e).__name__}: {e}")
+        check(
+            "password" not in str(e).lower()
+            or "corrupt" in str(e).lower()
+            or "cannot" in str(e).lower()
+            or "failed" in str(e).lower()
+            or "error" in str(e).lower()
+            or "invalid" in str(e).lower()
+            or "file" in str(e).lower(),
+            f"损坏 PDF 正确报错: {type(e).__name__}: {e}",
+        )
 
     # 加密 PDF
     info("--- 加密 PDF ---")
     try:
         doc = convert(str(fixtures / "encrypted.pdf"), engine="pymupdf")
         # Docling catches errors internally and returns empty result
-        check(len(doc.raw_markdown) == 0, f"加密 PDF 返回空内容: {len(doc.raw_markdown)} chars")
+        check(
+            len(doc.raw_markdown) == 0,
+            f"加密 PDF 返回空内容: {len(doc.raw_markdown)} chars",
+        )
     except Exception as e:
         check(True, f"加密 PDF 正确报错: {type(e).__name__}")
 
@@ -480,7 +583,9 @@ def test_edge_cases(fixtures: Path, tmp_dir: Path):
     info("--- 单行 PDF ---")
     try:
         doc = convert(str(fixtures / "single_line.pdf"), engine="pymupdf")
-        check(len(doc.raw_markdown) >= 0, f"单行 PDF 处理: {len(doc.raw_markdown)} chars")
+        check(
+            len(doc.raw_markdown) >= 0, f"单行 PDF 处理: {len(doc.raw_markdown)} chars"
+        )
     except Exception as e:
         check(True, f"单行 PDF (预期行为): {type(e).__name__}")
 
@@ -490,12 +595,15 @@ def test_edge_cases(fixtures: Path, tmp_dir: Path):
     try:
         doc = convert(str(fixtures / "large.pdf"), engine="pymupdf")
         elapsed = time.time() - t0
-        check(doc.page_count >= 20, f"多页 PDF: {doc.page_count} 页, 耗时: {elapsed:.1f}s")
+        check(
+            doc.page_count >= 20, f"多页 PDF: {doc.page_count} 页, 耗时: {elapsed:.1f}s"
+        )
     except Exception as e:
         check(False, f"多页 PDF 失败: {e}")
 
 
 # ---------- 9. 批量转换测试 ----------
+
 
 def test_batch(fixtures: Path, tmp_dir: Path):
     section("8. 批量转换测试")
@@ -514,9 +622,19 @@ def test_batch(fixtures: Path, tmp_dir: Path):
 
     output_dir = tmp_dir / "batch_output"
     result = subprocess.run(
-        [sys.executable, "-m", "pdf_pilot.cli",
-         str(batch_dir), "-o", str(output_dir), "-e", "pymupdf"],
-        capture_output=True, text=True, cwd=Path(__file__).parent,
+        [
+            sys.executable,
+            "-m",
+            "pdf_pilot.cli",
+            str(batch_dir),
+            "-o",
+            str(output_dir),
+            "-e",
+            "pymupdf",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).parent,
     )
     check(result.returncode == 0, f"批量转换退出码: {result.returncode}")
 
@@ -525,6 +643,7 @@ def test_batch(fixtures: Path, tmp_dir: Path):
 
 
 # ---------- 10. 性能测试 ----------
+
 
 def test_performance(fixtures: Path):
     section("9. 性能测试")
@@ -551,12 +670,13 @@ def test_performance(fixtures: Path):
 
 # ---------- 主流程 ----------
 
+
 def main():
     global passed, failed, skipped
 
-    print(f"\n{BOLD}{'#'*60}{RESET}")
+    print(f"\n{BOLD}{'#' * 60}{RESET}")
     print(f"{BOLD}#  pdf_pilot 完整自测{RESET}")
-    print(f"{BOLD}{'#'*60}{RESET}")
+    print(f"{BOLD}{'#' * 60}{RESET}")
     print(f"  Python: {sys.version}")
     print(f"  工作目录: {Path.cwd()}")
 
@@ -592,14 +712,15 @@ def main():
     except Exception as e:
         print(f"\n{RED}测试过程异常: {e}{RESET}")
         import traceback
+
         traceback.print_exc()
         failed += 1
 
     # 总结
     total = passed + failed
-    print(f"\n{BOLD}{'='*60}{RESET}")
+    print(f"\n{BOLD}{'=' * 60}{RESET}")
     print(f"{BOLD}  测试总结{RESET}")
-    print(f"{BOLD}{'='*60}{RESET}")
+    print(f"{BOLD}{'=' * 60}{RESET}")
     print(f"  {GREEN}通过: {passed}{RESET}")
     print(f"  {RED}失败: {failed}{RESET}")
     if skipped:

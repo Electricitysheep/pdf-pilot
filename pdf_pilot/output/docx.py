@@ -64,7 +64,9 @@ def write_docx(
         elif "|" in line and i + 1 < len(lines) and "---" in lines[i + 1]:
             table_lines = [line]
             i += 1
-            while i < len(lines) and ("|" in lines[i] or "---" in lines[i] or lines[i].strip() == ""):
+            while i < len(lines) and (
+                "|" in lines[i] or "---" in lines[i] or lines[i].strip() == ""
+            ):
                 if "|" in lines[i] or "---" in lines[i]:
                     table_lines.append(lines[i])
                 i += 1
@@ -72,12 +74,26 @@ def write_docx(
             continue
 
         # 列表项
-        elif re.match(r'^(\d+\.\s|[-*]\s)', line.strip()):
+        elif re.match(r"^(\d+\.\s|[-*]\s)", line.strip()):
             text = line.strip()[2:].strip()
             doc.add_paragraph(text, style="List Bullet")
 
-        elif line.strip() and line.strip()[0:2] in ("1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9."):
-            text = line.strip().split(". ", 1)[-1] if ". " in line.strip() else line.strip()
+        elif line.strip() and line.strip()[0:2] in (
+            "1.",
+            "2.",
+            "3.",
+            "4.",
+            "5.",
+            "6.",
+            "7.",
+            "8.",
+            "9.",
+        ):
+            text = (
+                line.strip().split(". ", 1)[-1]
+                if ". " in line.strip()
+                else line.strip()
+            )
             doc.add_paragraph(text, style="List Number")
 
         # 代码块
@@ -100,10 +116,10 @@ def write_docx(
             while i < len(lines):
                 next_line = lines[i].strip()
                 if (
-                    not next_line or
-                    next_line.startswith("#") or
-                    re.match(r'^(\d+\.\s|[-*]\s)', next_line) or
-                    next_line.startswith("```")
+                    not next_line
+                    or next_line.startswith("#")
+                    or re.match(r"^(\d+\.\s|[-*]\s)", next_line)
+                    or next_line.startswith("```")
                 ):
                     break
                 paragraph_lines.append(next_line)
@@ -123,7 +139,8 @@ def _add_table_to_doc(doc, table_lines: list[str]):
     """将 Markdown 表格行添加到 Word 文档"""
     # 过滤掉分隔行 (---|---|---)
     data_lines = [
-        line for line in table_lines
+        line
+        for line in table_lines
         if not all(c in ("|", "-", " ", ":") for c in line.strip())
     ]
 

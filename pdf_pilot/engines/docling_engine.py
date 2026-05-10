@@ -49,6 +49,7 @@ class DoclingEngine(EngineBase):
         try:
             import docling  # noqa: F401
             from docling.document_converter import DocumentConverter  # noqa: F401
+
             return True
         except ImportError:
             return False
@@ -56,6 +57,7 @@ class DoclingEngine(EngineBase):
     def _get_converter(self):
         if self._converter is None:
             from docling.document_converter import DocumentConverter
+
             self._converter = DocumentConverter()
         return self._converter
 
@@ -70,8 +72,7 @@ class DoclingEngine(EngineBase):
 
         if result.status.value != "success":
             logger.warning(
-                f"Docling conversion status: {result.status.value} "
-                f"for {pdf_path}"
+                f"Docling conversion status: {result.status.value} for {pdf_path}"
             )
 
         doc = result.document
@@ -134,37 +135,45 @@ class DoclingEngine(EngineBase):
                 if "section_header" in label.lower() or "heading" in label.lower():
                     text = self._get_item_text(item, doc) or ""
                     lvl = getattr(item, "level", 0)
-                    blocks.append(Block(
-                        type=BlockType.HEADING,
-                        content=text,
-                        level=int(lvl) if lvl else 1,
-                    ))
+                    blocks.append(
+                        Block(
+                            type=BlockType.HEADING,
+                            content=text,
+                            level=int(lvl) if lvl else 1,
+                        )
+                    )
 
                 # 段落文本
                 elif "text" in label.lower() or "paragraph" in label.lower():
                     text = self._get_item_text(item, doc) or ""
                     if text.strip():
-                        blocks.append(Block(
-                            type=BlockType.PARAGRAPH,
-                            content=text,
-                        ))
+                        blocks.append(
+                            Block(
+                                type=BlockType.PARAGRAPH,
+                                content=text,
+                            )
+                        )
 
                 # 列表项
                 elif "list_item" in label.lower():
                     text = self._get_item_text(item, doc) or ""
                     if text.strip():
-                        blocks.append(Block(
-                            type=BlockType.LIST_ITEM,
-                            content=text,
-                        ))
+                        blocks.append(
+                            Block(
+                                type=BlockType.LIST_ITEM,
+                                content=text,
+                            )
+                        )
 
                 # 代码块
                 elif "code" in label.lower():
                     text = self._get_item_text(item, doc) or ""
-                    blocks.append(Block(
-                        type=BlockType.CODE,
-                        content=text,
-                    ))
+                    blocks.append(
+                        Block(
+                            type=BlockType.CODE,
+                            content=text,
+                        )
+                    )
 
                 # 表格
                 elif "table" in label.lower():
@@ -182,10 +191,12 @@ class DoclingEngine(EngineBase):
                 elif "formula" in label.lower():
                     text = self._get_item_text(item, doc) or ""
                     if text.strip():
-                        formulas.append(Formula(
-                            latex=text.strip(),
-                            inline=False,
-                        ))
+                        formulas.append(
+                            Formula(
+                                latex=text.strip(),
+                                inline=False,
+                            )
+                        )
 
         except Exception as e:
             logger.warning(f"Error extracting structure: {e}")

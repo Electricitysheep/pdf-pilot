@@ -41,7 +41,9 @@ docling = ["docling>=2.0"]
 mineru = ["magic-pdf>=1.0"]
 dev = [
     "pytest>=8.0",
+    "pytest-cov>=5.0",
     "pytest-html>=4.0",
+    "pre-commit>=3.0",
     "ruff>=0.4.0",
 ]
 
@@ -67,3 +69,9 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W"]
 ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

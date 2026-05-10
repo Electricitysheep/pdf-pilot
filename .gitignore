@@ -23,4 +23,5 @@ tests/fixtures/*.pdf
 .DS_Store
 *.md.bak
 coverage.xml
+.coverage
 htmlcov/
