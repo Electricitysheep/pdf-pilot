@@ -10,21 +10,36 @@ page = doc.new_page()
 y_pos = 50
 text_data = [
     ("Introduction", 14),
-    ("Natural language processing has seen remarkable progress in recent years. "
-     "The Transformer architecture has become the de facto standard for many NLP tasks, "
-     "including machine translation, text summarization, and question answering.", 10),
+    (
+        "Natural language processing has seen remarkable progress in recent years. "
+        "The Transformer architecture has become the de facto standard for many NLP tasks, "
+        "including machine translation, text summarization, and question answering.",
+        10,
+    ),
     ("Background", 14),
-    ("Previous work has shown that attention mechanisms can capture long-range dependencies "
-     "in sequential data more effectively than recurrent or convolutional approaches.", 10),
+    (
+        "Previous work has shown that attention mechanisms can capture long-range dependencies "
+        "in sequential data more effectively than recurrent or convolutional approaches.",
+        10,
+    ),
     ("Method", 14),
-    ("We propose a novel approach based on self-attention mechanisms that processes "
-     "all positions in parallel, enabling efficient training on modern hardware.", 10),
+    (
+        "We propose a novel approach based on self-attention mechanisms that processes "
+        "all positions in parallel, enabling efficient training on modern hardware.",
+        10,
+    ),
     ("Results", 14),
-    ("Our model achieves state-of-the-art results on multiple benchmarks, "
-     "with quality improvements that scale significantly with model size.", 10),
+    (
+        "Our model achieves state-of-the-art results on multiple benchmarks, "
+        "with quality improvements that scale significantly with model size.",
+        10,
+    ),
     ("Conclusion", 14),
-    ("We have demonstrated that the proposed approach works well across diverse tasks. "
-     "Future work will extend to multilingual and multimodal settings.", 10),
+    (
+        "We have demonstrated that the proposed approach works well across diverse tasks. "
+        "Future work will extend to multilingual and multimodal settings.",
+        10,
+    ),
 ]
 
 for text, size in text_data:

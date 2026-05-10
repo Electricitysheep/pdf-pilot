@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ComplexityScore:
     """复杂度评分"""
+
     has_tables: bool = False
     table_count: int = 0
     has_formulas: bool = False
@@ -55,7 +56,7 @@ def detect_complexity(pdf_path: str) -> ComplexityScore:
             # 检测表格
             tabs = page.find_tables()
             if tabs:
-                table_count = len(tabs.tables) if hasattr(tabs, 'tables') else 0
+                table_count = len(tabs.tables) if hasattr(tabs, "tables") else 0
                 total_tables += table_count
 
             # 检测多栏
@@ -130,12 +131,13 @@ def _is_multi_column(blocks: list) -> bool:
 def _count_formulas(text: str) -> int:
     """粗略检测公式数量"""
     import re
+
     # 检测 LaTeX 风格的公式标记
     patterns = [
-        r'\$\$.*?\$\$',  # 块级公式 $$...$$
-        r'\$[^$]+\$$',  # 行内公式 $...$
-        r'\\\[.*?\\\]',  # \[...\] 块级
-        r'\\\(.+?\\\)',  # \(...\) 行内
+        r"\$\$.*?\$\$",  # 块级公式 $$...$$
+        r"\$[^$]+\$$",  # 行内公式 $...$
+        r"\\\[.*?\\\]",  # \[...\] 块级
+        r"\\\(.+?\\\)",  # \(...\) 行内
     ]
     count = 0
     for pattern in patterns:

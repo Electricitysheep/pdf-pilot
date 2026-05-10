@@ -44,10 +44,16 @@ def is_scanned_pdf(pdf_path: str) -> float:
             text_len = len(text.strip())
 
             if text_len < 200:
-                vector_count = len(page.get_drawings()) if hasattr(page, 'get_drawings') else 0
-                image_count = len(page.get_images()) if hasattr(page, 'get_images') else 0
+                vector_count = (
+                    len(page.get_drawings()) if hasattr(page, "get_drawings") else 0
+                )
+                image_count = (
+                    len(page.get_images()) if hasattr(page, "get_images") else 0
+                )
                 # 扫描件：无矢量对象且文本极少，或有图片但文本很少（OCR-overlay 扫描件）
-                if (vector_count == 0 and text_len < 50) or (image_count > 0 and text_len < 100):
+                if (vector_count == 0 and text_len < 50) or (
+                    image_count > 0 and text_len < 100
+                ):
                     scanned_page_count += 1
 
         sampled_ratio = scanned_page_count / max(check_pages, 1)

@@ -103,11 +103,7 @@ class EngineRouter:
                 engine = self._get_available_engine("docling")
 
         # 规则3: 纯简单数字 PDF → PyMuPDF (最快)
-        elif (
-            scan_score < 0.2 and
-            complexity and
-            complexity.overall_complexity == "low"
-        ):
+        elif scan_score < 0.2 and complexity and complexity.overall_complexity == "low":
             engine = self._get_available_engine("pymupdf")
 
         # 规则4: 英文学术 → Docling

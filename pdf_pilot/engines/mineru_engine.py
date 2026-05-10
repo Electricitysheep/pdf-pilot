@@ -48,6 +48,7 @@ class MinerUEngine(EngineBase):
     def is_available(self) -> bool:
         try:
             import magic_pdf  # noqa: F401
+
             return True
         except ImportError:
             return False
@@ -94,7 +95,9 @@ class MinerUEngine(EngineBase):
                 blocks = self._parse_markdown_to_blocks(raw_md)
 
             return ExtractedDocument(
-                title=blocks[0].content if blocks and blocks[0].type == BlockType.HEADING else "",
+                title=blocks[0].content
+                if blocks and blocks[0].type == BlockType.HEADING
+                else "",
                 blocks=blocks,
                 raw_markdown=raw_md,
                 metadata={
@@ -120,10 +123,12 @@ class MinerUEngine(EngineBase):
         for line in lines:
             if line.strip().startswith("```"):
                 if in_code_block:
-                    blocks.append(Block(
-                        type=BlockType.CODE,
-                        content="\n".join(code_lines),
-                    ))
+                    blocks.append(
+                        Block(
+                            type=BlockType.CODE,
+                            content="\n".join(code_lines),
+                        )
+                    )
                     code_lines = []
                     in_code_block = False
                 else:
@@ -147,25 +152,33 @@ class MinerUEngine(EngineBase):
                 content = line[level:].strip()
                 if content and content[0] == " ":
                     content = content[1:]
-                blocks.append(Block(
-                    type=BlockType.HEADING,
-                    content=content,
-                    level=min(level, 6),
-                ))
-            elif re.match(r'^(\d+\.\s|[-*]\s)', line.strip()):
-                blocks.append(Block(
-                    type=BlockType.LIST_ITEM,
-                    content=line.strip(),
-                ))
+                blocks.append(
+                    Block(
+                        type=BlockType.HEADING,
+                        content=content,
+                        level=min(level, 6),
+                    )
+                )
+            elif re.match(r"^(\d+\.\s|[-*]\s)", line.strip()):
+                blocks.append(
+                    Block(
+                        type=BlockType.LIST_ITEM,
+                        content=line.strip(),
+                    )
+                )
             elif "|" in line or "---" in line:
-                blocks.append(Block(
-                    type=BlockType.TABLE,
-                    content=line.strip(),
-                ))
+                blocks.append(
+                    Block(
+                        type=BlockType.TABLE,
+                        content=line.strip(),
+                    )
+                )
             else:
-                blocks.append(Block(
-                    type=BlockType.PARAGRAPH,
-                    content=line.strip(),
-                ))
+                blocks.append(
+                    Block(
+                        type=BlockType.PARAGRAPH,
+                        content=line.strip(),
+                    )
+                )
 
         return blocks

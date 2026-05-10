@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Generate a terminal demo GIF for README using asciinema"""
 
-import subprocess
 import time
-import sys
 from pathlib import Path
+
 
 def run_demo():
     """Run a simple demo that can be recorded as a GIF"""
@@ -55,6 +54,7 @@ def run_demo():
 
     print()
     print("=== Demo Complete ===")
+
 
 if __name__ == "__main__":
     run_demo()

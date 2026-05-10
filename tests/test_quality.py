@@ -14,14 +14,15 @@ logger = logging.getLogger(__name__)
 _DOCING_STABLE = True
 try:
     from pdf_pilot.engines.docling_engine import DoclingEngine
+
     engine = DoclingEngine()
     if engine.is_available():
         # 尝试一次转换来检测是否稳定
-        test_code = '''
+        test_code = """
 from pdf_pilot.engines.docling_engine import DoclingEngine
 e = DoclingEngine()
 e.extract("__PDF_PATH__")
-'''
+"""
         # 不实际测试，直接假设 GPU 环境稳定
         _DOCING_STABLE = True  # 假设稳定，实际运行时崩溃由 pytest 处理
 except Exception:
@@ -52,9 +53,11 @@ class TestEnglishQuality:
         printable = sum(1 for c in combined if c.isprintable() or c in "\n\t ")
         total = max(len(combined), 1)
         ratio = printable / total
-        assert ratio > 0.95, f"乱码率过高: {100*(1-ratio):.1f}%"
+        assert ratio > 0.95, f"乱码率过高: {100 * (1 - ratio):.1f}%"
 
-        logger.info(f"  Multi-column quality: {total} chars, {ratio*100:.1f}% printable")
+        logger.info(
+            f"  Multi-column quality: {total} chars, {ratio * 100:.1f}% printable"
+        )
 
     def test_multi_column_has_headings(self, multi_column_pdf):
         """多栏 PDF 应包含标题结构"""
@@ -89,7 +92,7 @@ class TestEnglishQuality:
         md = doc.raw_markdown
 
         # 检查公式标记 ($...$ 或 $$...$$)
-        has_inline_math = "$" in md and "$" in md[md.index("$")+1:]
+        has_inline_math = "$" in md and "$" in md[md.index("$") + 1 :]
         has_block_math = "$$" in md
 
         # 至少应有一些数学符号
